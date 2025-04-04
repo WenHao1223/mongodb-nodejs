@@ -15,9 +15,19 @@ const connectToDatabase = async () => {
   }
 };
 
+const listDatabases = async (client) => {
+  databasesList = await client.db().admin().listDatabases();
+  console.log("Databases:");
+  databasesList.databases.forEach((db) => console.log(` - ${db.name}`));
+}
+
 const main = async () => {
   try {
     await connectToDatabase();
+
+    await listDatabases(client);
+    
+    await client.close();
   } catch (err) {
     console.error(`Error connecting to the database: ${err}`);
   } finally {
