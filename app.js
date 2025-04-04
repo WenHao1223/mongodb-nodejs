@@ -42,14 +42,15 @@ const sampleGrade = {
 
 const main = async () => {
   try {
+    // Connect to Atlas Cluster
     await connectToDatabase();
 
+    // List database names
     await listDatabases(client);
 
+    // Insert document
     let result = await gradesCollection.insertOne(sampleGrade);
     console.log(`Inserted document: ${result.insertedId}`)
-
-    await client.close();
   } catch (err) {
     console.error(`Error connecting to the database: ${err}`);
   } finally {
