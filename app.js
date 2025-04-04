@@ -30,7 +30,7 @@ const listDatabases = async (client) => {
 };
 
 const sampleGrade = {
-  _id: new ObjectId("67e93e5fc0bbf2aed3b71242"),
+  // _id: new ObjectId("67e93e5fc0bbf2aed3b71242"),
   student_id: 546790,
   scores: [
     { type: "quiz", score: 60 },
@@ -40,6 +40,29 @@ const sampleGrade = {
   last_updated: new Date(),
 };
 
+const sampleGrades = [
+  {
+    student_id: 546791,
+    scores: [
+      { type: "quiz", score: 70 },
+      { type: "homework", score: 80 },
+      { type: "homework", score: 60 },
+    ],
+    class_id: 552,
+    last_updated: new Date(),
+  },
+  {
+    student_id: 546792,
+    scores: [
+      { type: "quiz", score: 70 },
+      { type: "quiz", score: 60 },
+      { type: "homework", score: 80 },
+    ],
+    class_id: 553,
+    last_updated: new Date(),
+  },
+];
+
 const main = async () => {
   try {
     // Connect to Atlas Cluster
@@ -48,9 +71,14 @@ const main = async () => {
     // List database names
     await listDatabases(client);
 
-    // Insert document
-    let result = await gradesCollection.insertOne(sampleGrade);
-    console.log(`Inserted document: ${result.insertedId}`)
+    // Insert single document
+    let insertOneResult = await gradesCollection.insertOne(sampleGrade);
+    console.log(`Inserted document: ${insertOneResult.insertedId}`);
+
+    // Insert multiple documents
+    let insertManyResult = await gradesCollection.insertMany(sampleGrades);
+    console.log(`Inserted ${insertManyResult.insertedCount} documents`);
+    console.log(insertManyResult);
   } catch (err) {
     console.error(`Error connecting to the database: ${err}`);
   } finally {
