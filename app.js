@@ -1,10 +1,13 @@
-const { MongoClient } = require('mongodb');
+const { MongoClient, ObjectId, Collection } = require("mongodb");
 const uri = require("./atlas_uri");
 
 console.log(uri);
 
 const client = new MongoClient(uri);
 const dbname = "training";
+const collection_name = "grades";
+
+const gradesCollection = client.db(dbname).collection(collection_name);
 
 const connectToDatabase = async () => {
   try {
@@ -24,7 +27,18 @@ const listDatabases = async (client) => {
   // List only the names
   console.log("Databases:");
   databasesList.databases.forEach((db) => console.log(` - ${db.name}`));
-}
+};
+
+const sampleGrade = {
+  _id: new ObjectId("67e93e5fc0bbf2aed3b71242"),
+  student_id: 546790,
+  scores: [
+    { type: "quiz", score: 60 },
+    { type: "homework", score: 90 },
+  ],
+  class_id: 551,
+  last_updated: new Date(),
+};
 
 const main = async () => {
   try {
@@ -32,12 +46,15 @@ const main = async () => {
 
     await listDatabases(client);
 
+    let result = await gradesCollection.insertOne(sampleGrade);
+    console.log(`Inserted document: ${result.insertedId}`)
+
     await client.close();
   } catch (err) {
     console.error(`Error connecting to the database: ${err}`);
   } finally {
     await client.close();
   }
-}
+};
 
 main();
