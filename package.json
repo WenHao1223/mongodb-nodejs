@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/WenHao1223/mongodb-nodejs#readme",
   "dependencies": {
+    "dotenv": "^16.4.7",
     "mongodb": "^6.15.0"
   }
 }
