@@ -31,7 +31,7 @@ const listDatabases = async (client) => {
 
 // Insert single document
 const sampleGrade = {
-  // _id: new ObjectId("67e93e5fc0bbf2aed3b71242"),
+  _id: new ObjectId("67e93e5fc0bbf2aed3b71242"),
   student_id: 546790,
   scores: [
     { type: "quiz", score: 60 },
@@ -82,7 +82,9 @@ const documentToUpdate = {
 const updateOneUpdate = { $inc: { "products.1.score": 2 } };
 
 // Update multiple documents
-const documentsToUpdate = { class_id: 550 };
+const documentsToUpdate = {
+  class_id: 550,
+};
 const updateManyUpdate = {
   $push: {
     products: {
@@ -90,6 +92,11 @@ const updateManyUpdate = {
       score: 20,
     },
   },
+};
+
+// Delete single document
+const documentToDelete = {
+  _id: new ObjectId("67e93e5fc0bbf2aed3b71242"),
 };
 
 const main = async () => {
@@ -137,6 +144,12 @@ const main = async () => {
     updateManyResult.modifiedCount > 0
       ? console.log(`Updated ${updateManyResult.modifiedCount} document`)
       : console.log("No documents updated");
+
+    // Delete single document
+    let deleteOneResult = await gradesCollection.deleteOne(documentToDelete);
+    deleteOneResult.deletedCount === 1
+      ? console.log("Deleted one document")
+      : console.log("No documents deleted");
   } catch (err) {
     console.error(`Error connecting to the database: ${err}`);
   } finally {
