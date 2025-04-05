@@ -79,7 +79,18 @@ const documentToFind = {
 const documentToUpdate = {
   _id: new ObjectId("67e94022c0bbf2aed3b7123b"),
 };
-const update = { $inc: { "products.1.score": 2 } };
+const updateOneUpdate = { $inc: { "products.1.score": 2 } };
+
+// Update multiple documents
+const documentsToUpdate = { class_id: 550 };
+const updateManyUpdate = {
+  $push: {
+    products: {
+      type: "extra",
+      score: 20,
+    },
+  },
+};
 
 const main = async () => {
   try {
@@ -112,10 +123,19 @@ const main = async () => {
     // Update single document
     let updateOneResult = await gradesCollection.updateOne(
       documentToUpdate,
-      update
+      updateOneUpdate
     );
     updateOneResult.modifiedCount === 1
       ? console.log("Updated one document")
+      : console.log("No documents updated");
+
+    // Update multiple documents
+    let updateManyResult = await gradesCollection.updateMany(
+      documentsToUpdate,
+      updateManyUpdate
+    );
+    updateManyResult.modifiedCount > 0
+      ? console.log(`Updated ${updateManyResult.modifiedCount} document`)
       : console.log("No documents updated");
   } catch (err) {
     console.error(`Error connecting to the database: ${err}`);
