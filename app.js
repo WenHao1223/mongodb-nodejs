@@ -108,6 +108,22 @@ const documentsToDelete = {
 // Starts the client session
 const session = client.startSession();
 
+// Aggregate pipeline $match and $group
+const pipelineMatchGroup = [
+  {
+    $match: {
+      class_id: 550,
+    },
+  },
+  {
+    $group: {
+      _id: "$student_id",
+      total_height: { $sum: "$height" },
+      avg_height: { $avg: "$height" },
+    },
+  },
+];
+
 const main = async () => {
   try {
     // Connect to Atlas Cluster
@@ -223,6 +239,14 @@ const main = async () => {
       process.exit(1);
     } finally {
       await session.endSession();
+    }
+
+    // Aggregate pipeline $match and $group
+    let aggregateMatchGroupResult = await gradesCollection.aggregate(
+      pipelineMatchGroup
+    );
+    for await (const doc of aggregateMatchGroupResult) {
+      console.log(doc);
     }
   } catch (err) {
     console.error(`Error connecting to the database: ${err}`);
