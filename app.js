@@ -124,6 +124,26 @@ const pipelineMatchGroup = [
   },
 ];
 
+// Aggregate pipeline $match $sort $project
+const pipelineMatchSortProject = [
+  {
+    $match: {
+      class_id: 550,
+      height: { $gte: 165 },
+    },
+  },
+  {
+    $sort: { height: -1 },
+  },
+  {
+    $project: {
+      _id: 0,
+      class_id: 1,
+      height: 1,
+    },
+  },
+];
+
 const main = async () => {
   try {
     // Connect to Atlas Cluster
@@ -245,9 +265,23 @@ const main = async () => {
     let aggregateMatchGroupResult = await gradesCollection.aggregate(
       pipelineMatchGroup
     );
+    let aggregateMatchGroupCount = 0;
     for await (const doc of aggregateMatchGroupResult) {
       console.log(doc);
+      aggregateMatchGroupCount++;
     }
+    console.log(`Found ${aggregateMatchGroupCount} documents`);
+
+    // Aggregate pipeline $match $sort $project
+    let aggregateMatchSortProjectResult = await gradesCollection.aggregate(
+      pipelineMatchSortProject
+    );
+    let aggregateMatchSortProjectCount = 0;
+    for await (const doc of aggregateMatchSortProjectResult) {
+      console.log(doc);
+      aggregateMatchSortProjectCount++;
+    }
+    console.log(`Found ${aggregateMatchSortProjectCount} documents`);
   } catch (err) {
     console.error(`Error connecting to the database: ${err}`);
   } finally {
