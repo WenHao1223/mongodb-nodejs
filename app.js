@@ -104,6 +104,10 @@ const documentsToDelete = {
   class_id: 555,
 };
 
+// Create transaction
+// Starts the client session
+const session = client.startSession();
+
 const main = async () => {
   try {
     // Connect to Atlas Cluster
@@ -161,6 +165,65 @@ const main = async () => {
     deleteManyResult.deletedCount > 0
       ? console.log(`Deleted ${deleteManyResult.deletedCount} documents`)
       : console.log("No documents deleted");
+
+    // Create transaction
+    try {
+      const transactionResults = await session.withTransaction(async () => {
+        // Insert single document
+        let insertOneResult = await gradesCollection.insertOne(sampleGrade, {
+          session,
+        });
+        console.log(
+          `Transaction: Inserted document: ${insertOneResult.insertedId}`
+        );
+
+        // Insert multiple documents
+        let insertManyResult = await gradesCollection.insertMany(sampleGrades, {
+          session,
+        });
+        console.log(
+          `Transaction: Inserted ${insertManyResult.insertedCount} documents`
+        );
+        console.log(insertManyResult);
+
+        // Delete single document
+        let deleteOneResult = await gradesCollection.deleteOne(
+          documentToDelete,
+          { session }
+        );
+        deleteOneResult.deletedCount === 1
+          ? console.log("Transaction: Deleted one document")
+          : console.log("Transaction: No documents deleted");
+
+        // Delete multiple documents
+        let deleteManyResult = await gradesCollection.deleteMany(
+          documentsToDelete,
+          { session }
+        );
+        deleteManyResult.deletedCount > 0
+          ? console.log(
+              `Transaction: Deleted ${deleteManyResult.deletedCount} documents`
+            )
+          : console.log("Transaction: No documents deleted");
+
+        return true;
+      });
+
+      // Committing transaction
+      console.log("Committing transaction...");
+      console.log(transactionResults);
+
+      if (transactionResults) {
+        console.log("The reservation was successfully created.");
+      } else {
+        console.log("The transaction was intentionally aborted.");
+      }
+    } catch (err) {
+      console.error(`Transaction aborted: ${err}`);
+      process.exit(1);
+    } finally {
+      await session.endSession();
+    }
   } catch (err) {
     console.error(`Error connecting to the database: ${err}`);
   } finally {
