@@ -29,6 +29,7 @@ const listDatabases = async (client) => {
   databasesList.databases.forEach((db) => console.log(` - ${db.name}`));
 };
 
+// Insert single document
 const sampleGrade = {
   // _id: new ObjectId("67e93e5fc0bbf2aed3b71242"),
   student_id: 546790,
@@ -40,6 +41,7 @@ const sampleGrade = {
   last_updated: new Date(),
 };
 
+// Insert multiple documents
 const sampleGrades = [
   {
     student_id: 546791,
@@ -63,6 +65,11 @@ const sampleGrades = [
   },
 ];
 
+// Find documents
+const documentsToFind = {
+  class_id: { $gt: 551 },
+};
+
 const main = async () => {
   try {
     // Connect to Atlas Cluster
@@ -79,6 +86,12 @@ const main = async () => {
     let insertManyResult = await gradesCollection.insertMany(sampleGrades);
     console.log(`Inserted ${insertManyResult.insertedCount} documents`);
     console.log(insertManyResult);
+
+    // Find documents
+    let result = gradesCollection.find(documentsToFind);
+    let docCount = gradesCollection.countDocuments(documentsToFind);
+    await result.forEach((doc) => console.log(doc));
+    console.log(`Found ${await docCount} documents`);
   } catch (err) {
     console.error(`Error connecting to the database: ${err}`);
   } finally {
