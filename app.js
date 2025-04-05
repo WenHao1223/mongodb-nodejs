@@ -50,7 +50,7 @@ const sampleGrades = [
       { type: "homework", score: 80 },
       { type: "homework", score: 60 },
     ],
-    class_id: 552,
+    class_id: 555,
     last_updated: new Date(),
   },
   {
@@ -60,7 +60,7 @@ const sampleGrades = [
       { type: "quiz", score: 60 },
       { type: "homework", score: 80 },
     ],
-    class_id: 553,
+    class_id: 555,
     last_updated: new Date(),
   },
 ];
@@ -97,6 +97,11 @@ const updateManyUpdate = {
 // Delete single document
 const documentToDelete = {
   _id: new ObjectId("67e93e5fc0bbf2aed3b71242"),
+};
+
+// Delete multiple documents
+const documentsToDelete = {
+  class_id: 555,
 };
 
 const main = async () => {
@@ -149,6 +154,12 @@ const main = async () => {
     let deleteOneResult = await gradesCollection.deleteOne(documentToDelete);
     deleteOneResult.deletedCount === 1
       ? console.log("Deleted one document")
+      : console.log("No documents deleted");
+
+    // Delete multiple documents
+    let deleteManyResult = await gradesCollection.deleteMany(documentsToDelete);
+    deleteManyResult.deletedCount > 0
+      ? console.log(`Deleted ${deleteManyResult.deletedCount} documents`)
       : console.log("No documents deleted");
   } catch (err) {
     console.error(`Error connecting to the database: ${err}`);
