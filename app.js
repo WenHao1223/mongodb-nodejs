@@ -75,6 +75,12 @@ const documentToFind = {
   _id: new ObjectId("67e93e5fc0bbf2aed3b71238"),
 };
 
+// Update single document
+const documentToUpdate = {
+  _id: new ObjectId("67e94022c0bbf2aed3b7123b"),
+};
+const update = { $inc: { "products.1.score": 2 } };
+
 const main = async () => {
   try {
     // Connect to Atlas Cluster
@@ -102,6 +108,15 @@ const main = async () => {
     let findOneResult = await gradesCollection.findOne(documentToFind);
     console.log(findOneResult);
     console.log("Found one document");
+
+    // Update single document
+    let updateOneResult = await gradesCollection.updateOne(
+      documentToUpdate,
+      update
+    );
+    updateOneResult.modifiedCount === 1
+      ? console.log("Updated one document")
+      : console.log("No documents updated");
   } catch (err) {
     console.error(`Error connecting to the database: ${err}`);
   } finally {
