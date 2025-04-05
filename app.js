@@ -70,6 +70,11 @@ const documentsToFind = {
   class_id: { $gt: 551 },
 };
 
+// Find single document
+const documentToFind = {
+  _id: new ObjectId("67e93e5fc0bbf2aed3b71238"),
+};
+
 const main = async () => {
   try {
     // Connect to Atlas Cluster
@@ -88,10 +93,15 @@ const main = async () => {
     console.log(insertManyResult);
 
     // Find documents
-    let result = gradesCollection.find(documentsToFind);
-    let docCount = gradesCollection.countDocuments(documentsToFind);
-    await result.forEach((doc) => console.log(doc));
-    console.log(`Found ${await docCount} documents`);
+    let findResult = gradesCollection.find(documentsToFind);
+    let findDocCount = gradesCollection.countDocuments(documentsToFind);
+    await findResult.forEach((doc) => console.log(doc));
+    console.log(`Found ${await findDocCount} documents`);
+
+    // Find single document
+    let findOneResult = await gradesCollection.findOne(documentToFind);
+    console.log(findOneResult);
+    console.log("Found one document");
   } catch (err) {
     console.error(`Error connecting to the database: ${err}`);
   } finally {
